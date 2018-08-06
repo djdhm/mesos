@@ -110,7 +110,8 @@ TEST(HTTPTest, ModelTask)
       "    \"cpus\":0,"
       "    \"disk\":0,"
       "    \"gpus\":0,"
-      "    \"mem\":0"
+      "    \"mem\":0,"
+      "    \"network_bandwidth\":0"
       "  },"
       "  \"limits\":"
       "  {"
@@ -166,7 +167,7 @@ TEST(HTTPTest, ModelResources)
   // Resources of mixed types, roles, duplicate names; standard (
   // e.g., 'cpus') and custom (i.e., 'bar').
   Resources nonRevocable = Resources::parse(
-      "cpus:1;cpus(foo):1;gpus:1;mem:512;"
+      "cpus:1;cpus(foo):1;gpus:1;mem:512;network_bandwidth:100;"
       "disk:1024;ports(foo):[1-10];bar:1").get();
 
   Resource revocableCpus = Resources::parse("cpus", "1.1", "*").get();
@@ -194,6 +195,7 @@ TEST(HTTPTest, ModelResources)
       "  \"gpus_revocable\":2,"
       "  \"mem\":512,"
       "  \"mem_revocable\":513,"
+      "  \"network_bandwidth\":100,"
       "  \"ports\":\"[1-10]\""
       "}");
 
@@ -224,6 +226,7 @@ TEST(HTTP, ModelRoleResources)
       "    \"disk\":0,"
       "    \"gpus\":0,"
       "    \"mem\":0,"
+      "    \"network_bandwidth\":0,"
       "    \"ports\":\"[1-10]\""
       "  },"
       "  \"bar\":"
@@ -231,7 +234,8 @@ TEST(HTTP, ModelRoleResources)
       "    \"cpus\":0,"
       "    \"disk\":1024,"
       "    \"gpus\":0,"
-      "    \"mem\":512"
+      "    \"mem\":512,"
+      "    \"network_bandwidth\":0"
       "  }"
       "}");
 
