@@ -2091,6 +2091,10 @@ void HierarchicalAllocatorProcess::__generateOffers()
   foreach (const SlaveID& slaveId, slaveIds) {
     Slave& slave = *CHECK_NOTNONE(getSlave(slaveId));
 
+    VLOG(2) << "[Criteo] Here is the sorted list of roles that will be considered to get resources for slave " << slaveId;
+    foreach (const string& role, roleSorter->sort()) {
+        VLOG(2) << "[CRITEO] - " << role;
+    }
     foreach (const string& role, roleSorter->sort()) {
       const Quota& quota = getQuota(role);
 
@@ -2112,12 +2116,14 @@ void HierarchicalAllocatorProcess::__generateOffers()
       }();
 
       if (noFrameworks) {
+        VLOG(2) << "[CRITEO] " + role + " has no active framework, it will be ignored";
         continue;
       }
 
       // TODO(bmahler): Handle shared volumes, which are always available but
       // should be excluded here based on `offeredSharedResources`.
       if (slave.getAvailable().empty()) {
+        VLOG(2) << "[CRITEO] " << slaveId << " has no resource to offer anymore, skipping";
         break; // Nothing left on this agent.
       }
 
@@ -2145,8 +2151,10 @@ void HierarchicalAllocatorProcess::__generateOffers()
         Resources available =
           slave.getAvailable().allocatableTo(role) -
           offeredSharedResources.get(slaveId).getOrElse(Resources());
+        VLOG(2) << "[CRITEO] slave " << slaveId << " has following available resources: " << available;
 
         if (available.empty()) {
+          VLOG(2) << "[CRITEO] " + role + " cannot be allocated any resources on slave " << slaveId << " due to the allocatableTo method or because of sharedResources on that slave";
           break; // Nothing left for the role.
         }
 
@@ -2246,6 +2254,7 @@ void HierarchicalAllocatorProcess::__generateOffers()
         // NOTE: Since we currently only support top-level roles to
         // have quota, there are no ancestor reservations involved here.
         if (guaranteesOffering.empty()) {
+          VLOG(2) << "[CRITEO] " + role + " has no guarantee allocation, continuing " << slaveId;
           continue;
         }
 
@@ -2294,6 +2303,7 @@ void HierarchicalAllocatorProcess::__generateOffers()
         // If the framework filters these resources, ignore.
         if (!allocatable(toOffer, role, framework) ||
             isFiltered(framework, role, slave, toOffer)) {
+          VLOG(2) << "[CRITEO] " + role + " filters these resources OR offer would be smaller than minAllocatableParameter" << slaveId;
           continue;
         }
 
