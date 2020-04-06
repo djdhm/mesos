@@ -27,8 +27,9 @@ ResourceSlaveSorterCPUFirst::~ResourceSlaveSorterCPUFirst() {}
 
 bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
 {
- CHECK(total_.resources.contains(l));
- CHECK(total_.resources.contains(r));
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
+  CHECK(total_.resources.contains(l));
+  CHECK(total_.resources.contains(r));
   const Resources &lres = total_.resources[l];
   const Resources &rres = total_.resources[r];
   if (lres.cpus().get() != rres.cpus().get())
@@ -41,6 +42,7 @@ bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
 void ResourceSlaveSorterCPUFirst::sort(
   std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   std::sort(
     begin, end, [this](SlaveID l, SlaveID r) { return _compare(l, r); });
 }
@@ -50,6 +52,7 @@ void ResourceSlaveSorterCPUFirst::add(
   const SlaveInfo& slaveInfo,
   const Resources& resources)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   // TODO(jabnouneo): refine
   // totalResources[slaveId] += resources.createStrippedScalarQuantity();
   if (!resources.empty()) {
@@ -72,6 +75,7 @@ void ResourceSlaveSorterCPUFirst::add(
 void ResourceSlaveSorterCPUFirst::remove(
   const SlaveID& slaveId, const Resources& resources)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   if (!resources.empty()) {
     CHECK(total_.resources.contains(slaveId));
     CHECK(total_.resources[slaveId].contains(resources))
@@ -101,6 +105,7 @@ void ResourceSlaveSorterCPUFirst::remove(
 void ResourceSlaveSorterCPUFirst::allocated(
   const SlaveID& slaveId, const Resources& toAdd)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   // Add shared resources to the allocated quantities when the same
   // resources don't already exist in the allocation.
   const Resources sharedToAdd =
@@ -119,6 +124,7 @@ void ResourceSlaveSorterCPUFirst::allocated(
 void ResourceSlaveSorterCPUFirst::unallocated(
   const SlaveID& slaveId, const Resources& toRemove)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   // TODO(jabnouneo): refine and account for shared resources
   CHECK(allocatedResources.contains(slaveId));
   CHECK(allocatedResources.at(slaveId).contains(toRemove))

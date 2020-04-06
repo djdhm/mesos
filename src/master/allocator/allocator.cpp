@@ -51,6 +51,11 @@ Try<Allocator*> Allocator::create(
     const string& frameworkSorter,
     const string& slaveSorter)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
+  VLOG(2) << "[CRITEO] name " << name << std::endl;
+  VLOG(2) << "[CRITEO] roleSorter " << roleSorter << std::endl;
+  VLOG(2) << "[CRITEO] frameworkSorter " << frameworkSorter << std::endl;
+  VLOG(2) << "[CRITEO] slaveSorter " << slaveSorter << std::endl;
   // Create an instance of the default allocator. If other than the
   // default allocator is requested, search for it in loaded modules.
   //
@@ -100,6 +105,10 @@ Try<Allocator*> Allocator::create(
     const string& roleSorter,
     const string& frameworkSorter)
 {
+  VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
+  VLOG(2) << "[CRITEO] name " << name << std::endl;
+  VLOG(2) << "[CRITEO] roleSorter " << roleSorter << std::endl;
+  VLOG(2) << "[CRITEO] frameworkSorter " << frameworkSorter << std::endl;
   return Allocator::create(name, roleSorter, frameworkSorter, defaultSlaveSorter);
 }
 } // namespace allocator {

@@ -1761,7 +1761,21 @@ void HierarchicalAllocatorProcess::__allocate()
     }
   }
 
+  VLOG(2) << "[CRITEO] slaveIds before sorting :" << std::endl;
+
+  for(auto slaveId : slaveIds)
+  {
+    VLOG(2) << "[CRITEO] " << slaveId << std::endl;
+  }
+
   slaveSorter->sort(slaveIds.begin(), slaveIds.end());
+
+  VLOG(2) << "[CRITEO] slaveIds after sorting :" << std::endl;
+
+  for(auto slaveId : slaveIds)
+  {
+    VLOG(2) << "[CRITEO] " << slaveId << std::endl;
+  }
 
   // To enforce quota, we keep track of consumed quota for roles with a
   // non-default quota.
