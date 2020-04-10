@@ -64,7 +64,7 @@ void ResourceSlaveSorterCPUFirst::add(
         return !total_.resources[slaveId].contains(resource);
       });
 
-    total_.resources[slaveId] += resources;
+    total_.resources[slaveId] += resources.reserved();
 
     const Resources scalarQuantities =
       (resources.nonShared() + newShared).createStrippedScalarQuantity();
