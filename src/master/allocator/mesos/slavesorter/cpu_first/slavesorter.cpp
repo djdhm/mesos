@@ -28,10 +28,10 @@ ResourceSlaveSorterCPUFirst::~ResourceSlaveSorterCPUFirst() {}
 bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
 {
   VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
-  CHECK(total_.resources.contains(l));
-  CHECK(total_.resources.contains(r));
-  const Resources &lres = total_.resources[l];
-  const Resources &rres = total_.resources[r];
+  CHECK(allocatedResources.contains(l));
+  CHECK(allocatedResources.contains(r));
+  const Resources &lres = allocatedResources[l];
+  const Resources &rres = allocatedResources[r];
   VLOG(3) << "[CRITEO] nb cpus lres " << lres.cpus().get() << " rres " << rres.cpus().get();
   if (lres.cpus().get() != rres.cpus().get())
     return lres.cpus().get() > rres.cpus().get();
