@@ -33,11 +33,7 @@ bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
   const Resources &lres = allocatedResources[l];
   const Resources &rres = allocatedResources[r];
   VLOG(3) << "[CRITEO] nb cpus lres " << lres.cpus().get() << " rres " << rres.cpus().get();
-  if (lres.cpus().get() != rres.cpus().get())
-    return lres.cpus().get() > rres.cpus().get();
-  if (lres.mem().get() != rres.mem().get())
-    return lres.mem().get() > rres.mem().get();
-  return (lres.disk().get() > rres.disk().get());
+  return lres.cpus().get() < rres.cpus().get();
 }
 
 void ResourceSlaveSorterCPUFirst::sort(
