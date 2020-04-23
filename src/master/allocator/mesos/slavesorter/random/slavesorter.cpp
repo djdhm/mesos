@@ -21,9 +21,9 @@ namespace master {
 namespace allocator {
 
 void RandomSlaveSorter::sort(
-  std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
+  std::vector<SlaveID> slaveids)
 {
-  std::random_shuffle(begin, end);
+  std::random_shuffle(slaveids.begin(), slaveids.end());
 }
 
 } // namespace allocator {

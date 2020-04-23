@@ -49,7 +49,7 @@ public:
       const Option<std::string>& slaveSorterResourceWeights);
 
   virtual void sort(
-    std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end);
+    std::vector<SlaveID> slaveids);
   virtual void add(
     const SlaveID& slaveId,
     const SlaveInfo& slaveInfo,

@@ -33,11 +33,11 @@ bool LexicographicSlaveSorter::compareSlaves(SlaveID a, SlaveID b)
     *slaveInfos[b].mutable_hostname());
 }
 void LexicographicSlaveSorter::sort(
-  std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
+  std::vector<SlaveID> slaveids)
 {
   std::sort(
-    begin,
-    end,
+    slaveids.begin(),
+    slaveids.end(),
     std::bind(&LexicographicSlaveSorter::compareSlaves, this, _1, _2));
 }
 

@@ -1768,7 +1768,7 @@ void HierarchicalAllocatorProcess::__allocate()
     VLOG(2) << "[CRITEO] " << slaveId << std::endl;
   }
 
-  slaveSorter->sort(slaveIds.begin(), slaveIds.end());
+  slaveSorter->sort(slaveIds);
 
   VLOG(2) << "[CRITEO] slaveIds after sorting :" << std::endl;
 

@@ -37,18 +37,20 @@ bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
 }
 
 void ResourceSlaveSorterCPUFirst::sort(
-  std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
+  std::vector<SlaveID> slaveids)
 {
   VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   std::sort(
-    begin, end, [this](SlaveID l, SlaveID r) { return _compare(l, r); });
+    slaveids.begin(), slaveids.end(), [this](SlaveID l, SlaveID r) { return _compare(l, r); });
   int nb = 0;
-  std::remove_if(begin, end, [&nb, &begin, &end](SlaveID x) {
-    VLOG(3) << "[CRITEO] Threshold " << 0.3 * std::distance(begin, end) << std::endl;
+  slaveids.erase(std::remove_if(slaveids.begin(), slaveids.end(), [&nb, &slaveids](SlaveID x) {
+    auto threshold = 0.3 * std::distance(slaveids.begin(), slaveids.end());
+    VLOG(3) << "[CRITEO] Threshold " << threshold << std::endl;
     VLOG(3) << "[CRITEO] nb = " << nb << std::endl;
-    VLOG(3) << "[CRITEO] will " << ((nb > 0.3 * std::distance(begin, end)) ? "remove" : "ignore") << " slave " << x << std::endl;
-    return nb++ > 0.3 * std::distance(begin, end);
-  });
+    VLOG(3) << "[CRITEO] will " << (threshold ? "remove" : "ignore") << " slave " << x << std::endl;
+    return nb++ > threshold;
+  }),
+  slaveids.end());
 }
 
 void ResourceSlaveSorterCPUFirst::add(

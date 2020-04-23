@@ -51,10 +51,10 @@ void ResourcesWeightedSlaveSorter::initialize(const Option<std::string>& slaveSo
 }
 
 void ResourcesWeightedSlaveSorter::sort(
-  std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
+  std::vector<SlaveID> slaveids)
 {
   std::sort(
-    begin, end, [this](SlaveID l, SlaveID r) { return _compare(l, r); });
+    slaveids.begin(), slaveids.end(), [this](SlaveID l, SlaveID r) { return _compare(l, r); });
 }
 
 void ResourcesWeightedSlaveSorter::add(

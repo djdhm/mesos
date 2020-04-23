@@ -53,8 +53,7 @@ public:
   //   // Returns all of the slaves in the order that they should
   //   // be allocated to, according to this Sorter's policy.
   virtual void sort(
-    std::vector<SlaveID>::iterator begin,
-    std::vector<SlaveID>::iterator end) = 0;
+    std::vector<SlaveID> slaveids) = 0;
 
   // Add resources to the total pool of resources this
   // Sorter should consider.
