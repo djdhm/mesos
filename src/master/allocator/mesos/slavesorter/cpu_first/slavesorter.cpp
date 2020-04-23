@@ -33,7 +33,7 @@ bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
   const Resources &lres = allocatedResources[l];
   const Resources &rres = allocatedResources[r];
   VLOG(3) << "[CRITEO] nb cpus lres " << lres.cpus().get() << " rres " << rres.cpus().get();
-  return lres.cpus().get() < rres.cpus().get();
+  return lres.cpus().get() > rres.cpus().get();
 }
 
 void ResourceSlaveSorterCPUFirst::sort(
@@ -42,6 +42,13 @@ void ResourceSlaveSorterCPUFirst::sort(
   VLOG(3) << "[CRITEO] Entering " << __FUNCTION__ << std::endl;
   std::sort(
     begin, end, [this](SlaveID l, SlaveID r) { return _compare(l, r); });
+  int nb = 0;
+  std::remove_if(begin, end, [&nb, &begin, &end](SlaveID x) {
+    VLOG(3) << "[CRITEO] Threshold " << 0.3 * std::distance(begin, end) << std::endl;
+    VLOG(3) << "[CRITEO] nb = " << nb << std::endl;
+    VLOG(3) << "[CRITEO] will " << ((nb > 0.3 * std::distance(begin, end)) ? "remove" : "ignore") << " slave " << x << std::endl;
+    return nb++ > 0.3 * std::distance(begin, end);
+  });
 }
 
 void ResourceSlaveSorterCPUFirst::add(
