@@ -16,9 +16,8 @@ jobs:
           key: mesos-built-${{ github.sha }}
       - name: Build the Docker image
         if: steps.cache.outputs.cache-hit != 'true'
-        run: curl https://raw.githubusercontent.com/criteo/mesosbuild/master/Dockerfile.automake |
-          docker build .
-          --file -
+        run: docker build .
+          --file docker/Dockerfile
           --tag mesosbuild:"$GITHUB_SHA"
           --build-arg CONFIGURE_EXTRA_FLAGS="--enable-test-only-regression"
       - name: Test mesos
