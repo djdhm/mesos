@@ -14,13 +14,14 @@ RUN yum -y install \
   libblkid-devel \
   libevent-devel \
   libnl3-devel \
-  libtool \
   libseccomp-devel \
+  libtool \
   make \
   maven \
   mlocate \
   openssl-devel \
   patch \
+  python3 \
   subversion-devel \
   vim \
   xfsprogs-devel \
