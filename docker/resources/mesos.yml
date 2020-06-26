@@ -15,4 +15,4 @@ services:
       MESOS_EXEC_DIR: /src/mesos/src/
       MESOS_HOSTNAME: localhost
     volumes:
-      - ${MESOS_SOURCES}:/src/mesos/
+      - ../../:/src/mesos/
