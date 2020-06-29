@@ -1,8 +1,8 @@
 ## SETUP
 1. `docker build -f docker/Dockerfile --target runner -t runner-mesos .`
 2. `docker build -f docker/Dockerfile --target builder -t builder-mesos .`
-3. Then, from root dir: `docker run -v $(pwd):/src/mesos builder-mesos`
-4. Go back in `docker/` folder and `docker-compose up`
+3. `docker run -v $(pwd):/src/mesos builder-mesos`
+4. `docker-compose -f docker/docker-compose.yml up`
 
 After each source modification, just kill docker-compose, rebuild and `docker-compose up`
 
