@@ -67,7 +67,7 @@ RUN yum -y install ruby
 CMD /usr/bin/mesos-agent
 
 # Second stage: Building (version specific)
-FROM runner AS builded
+FROM runner AS built
 
 COPY . /src/mesos
 WORKDIR /src/mesos
@@ -91,4 +91,3 @@ RUN make -j "$(nproc)"
 
 ENV MESOS_ROOT_DIR=/src/mesos
 ENV MESOS_BUILD_DIR=/src/mesos
-
