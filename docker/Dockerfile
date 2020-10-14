@@ -67,7 +67,7 @@ RUN yum -y install ruby
 CMD /usr/bin/mesos-agent
 
 # Second stage: Building (version specific)
-FROM builder AS builded
+FROM runner AS builded
 
 COPY . /src/mesos
 WORKDIR /src/mesos
