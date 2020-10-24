@@ -43,14 +43,19 @@ CMD autoreconf --install -Wall --verbose && \
      CFLAGS="-Wno-deprecated-declarations" \
      CXXFLAGS="-Wno-deprecated-declarations" \
      --disable-silent-rules \
+     --prefix=/usr \
+     --bindir=/usr/bin \
+     --libdir=/usr/lib64 \
+     --includedir=/usr/include \
      --disable-python \
      --disable-python-dependency-install \
      --enable-libevent \
      --enable-ssl \
      --enable-optimize \
-     --enable-seccomp-isolator \
      --with-network-isolator \
+     --enable-seccomp-isolator \
      --enable-xfs-disk-isolator \
+     --enable-perftools \
      ${CONFIGURE_EXTRA_FLAGS} && \
   make -j "$(nproc)"
 
@@ -77,15 +82,20 @@ RUN ./configure \
      CFLAGS="-Wno-deprecated-declarations" \
      CXXFLAGS="-Wno-deprecated-declarations" \
      --disable-silent-rules \
+     --prefix=/usr \
+     --bindir=/usr/bin \
+     --libdir=/usr/lib64 \
+     --includedir=/usr/include \
      --disable-python \
      --disable-python-dependency-install \
      --enable-libevent \
      --enable-ssl \
      --enable-optimize \
-     --enable-seccomp-isolator \
      --with-network-isolator \
+     --enable-seccomp-isolator \
      --enable-xfs-disk-isolator \
-     ${CONFIGURE_EXTRA_FLAGS}
+     --enable-perftools \
+     ${CONFIGURE_EXTRA_FLAGS} && \
 
 RUN make -j "$(nproc)"
 
