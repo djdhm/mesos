@@ -3657,16 +3657,13 @@ void Slave::launchExecutor(
 
 
   if(environment.find("CRITEO_CNI") != environment.end() && environment["CRITEO_CNI"] == "enabled"){
-
-    // Slave has CNI enabled but doesn't define any networks, public and private subnets must be injected.
+    // Slave has CNI enabled but doesn't define any networks, the criteo subnet must be injected.
     ContainerInfo* containerInfo = containerConfig.mutable_container_info();
     containerInfo->set_type(ContainerInfo_Type::ContainerInfo_Type_MESOS);
 
     if (containerInfo->network_infos_size() == 0) {
-      NetworkInfo* publicNet = containerInfo->add_network_infos();
-
-      publicNet->set_name("criteo");
-
+      NetworkInfo* criteoNet = containerInfo->add_network_infos();
+      criteoNet->set_name("criteo");
 
       Ports ports = *containerConfig.mutable_executor_info()
                        ->mutable_discovery()
@@ -3674,7 +3671,7 @@ void Slave::launchExecutor(
 
       // We need to take the defined ports and map them in the public subnet
       for (const auto port : *ports.mutable_ports()) {
-        auto p = publicNet->add_port_mappings();
+        auto p = criteoNet->add_port_mappings();
         p->set_host_port(port.number());
         p->set_container_port(port.number());
         p->set_protocol(port.protocol());
