@@ -27,7 +27,7 @@
 #include <mesos/resources.hpp>
 #include <mesos/roles.hpp>
 #include <mesos/type_utils.hpp>
-
+#include <mesos/allocator/tsl/ordered_map.h>
 #include <process/after.hpp>
 #include <process/delay.hpp>
 #include <process/dispatch.hpp>
@@ -612,7 +612,7 @@ void HierarchicalAllocatorProcess::initialize(
     const Options& _options,
     const lambda::function<
         void(const FrameworkID&,
-             const hashmap<string, hashmap<SlaveID, Resources>>&)>&
+             const hashmap<string, tsl::ordered_map<SlaveID, Resources>>&)>&
       _offerCallback,
     const lambda::function<
         void(const FrameworkID&,
@@ -1941,7 +1941,7 @@ void HierarchicalAllocatorProcess::__generateOffers()
   //       framework having the corresponding role.
   //   (2) For unreserved resources on the slave, allocate these
   //       to a framework of any role.
-  hashmap<FrameworkID, hashmap<string, hashmap<SlaveID, Resources>>> offerable;
+  hashmap<FrameworkID, hashmap<string, tsl::ordered_map<SlaveID, Resources>>> offerable;
 
   // NOTE: This function can operate on a small subset of
   // `allocationCandidates`, we have to make sure that we don't
@@ -2361,10 +2361,9 @@ void HierarchicalAllocatorProcess::__generateOffers()
   ResourceQuantities heldBackForHeadroom;
   size_t heldBackAgentCount = 0;
 
-  // We randomize the agents here to "spread out" the effect of the first
-  // stage, which tends to allocate from the front of the agent list more
-  // so than the back.
-  std::random_shuffle(slaveIds.begin(), slaveIds.end());
+  // Call the slave sorter again instead of random shuffle 
+  slaveSorter->sort(slaveIds.begin(), slaveIds.end());
+
 
   foreach (const SlaveID& slaveId, slaveIds) {
     Slave& slave = *CHECK_NOTNONE(getSlave(slaveId));
