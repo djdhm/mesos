@@ -1,5 +1,5 @@
 # First stage: Builder (version independent)
-FROM centos:7.6.1810 AS builder
+FROM centos:8.1.1911 AS builder
 
 RUN yum -y install epel-release
 RUN yum -y install \

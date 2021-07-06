@@ -1,16 +1,17 @@
 #!/bin/sh
 
+FLAGS="-Wno-deprecated-declarations -Wno-error=parentheses"
+
 autoreconf --install -Wall --verbose
-./configure \
-    CFLAGS="-Wno-deprecated-declarations" \
-    CXXFLAGS="-Wno-deprecated-declarations" \
+
+PYTHON=$(which python3) ./configure \
+    CFLAGS="$FLAGS" \
+    CXXFLAGS="$FLAGS" \
     --disable-silent-rules \
     --prefix=/usr \
     --bindir=/usr/bin \
     --libdir=/usr/lib64 \
     --includedir=/usr/include \
-    --disable-python \
-    --disable-python-dependency-install \
     --enable-libevent \
     --enable-ssl \
     --enable-optimize \
