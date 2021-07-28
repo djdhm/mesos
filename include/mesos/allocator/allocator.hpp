@@ -73,6 +73,8 @@ struct Options
   float agentRecoveryFactor = 0.80;
 
   bool sortRolesOnce = false;
+  bool minOfferableFilter = false;
+  
 };
 
 

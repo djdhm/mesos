@@ -201,11 +201,21 @@ mesos::internal::master::Flags::Flags()
       "slave_sorter_resource_weights",
       "Weights to apply to resources while sorting slaves",
       "");
+      
   add(&Flags::sort_roles_once,
       "sort_roles_once",
       "If `true`, sort roles only one time per allocation cycle. If\n"
       "`false`, sort roles after each iteration in slaves list.",
       false);
+
+  add(&Flags::min_offerable_filter,
+      "min_offerable_filter",
+      "If `true`,offer only ressources that meet the quantities specified for each role"
+      " depending on the declined offers previously to prevent sending offers"
+      "knowing that they won't be matched in advance."
+      " If `false`, send all offers given for a role without filtering on resources.",
+      false);
+
   add(&Flags::allocation_interval,
       "allocation_interval",
       "Amount of time to wait between performing\n"
