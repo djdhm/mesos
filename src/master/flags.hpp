@@ -65,6 +65,7 @@ public:
   std::string slave_sorter;
   std::string slave_sorter_resource_weights;
   bool sort_roles_once;
+  bool min_offerable_filter;
   Duration allocation_interval;
   Option<std::string> cluster;
   Option<std::string> roles;

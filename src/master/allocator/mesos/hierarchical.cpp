@@ -480,6 +480,21 @@ void HierarchicalAllocatorProcess::initialize(
       return this->roleSorter->sort();
     };
   }
+
+  if( options.minOfferableFilter){
+    isOfferable = [this] (const Framework& framework,const string& role,const Resources& resources){
+      double minimumCpus = 0;
+      if ( framework.minOfferableResources.find(role) != framework.minOfferableResources.end() ) {
+        minimumCpus = framework.minOfferableResources.at(role);
+      }   
+      return resources.cpus().getOrElse(0) >  minimumCpus;
+     };
+
+  }else{
+    isOfferable = [this] (const Framework& framework,const string& role,const Resources& resources){
+       return true;
+     };
+  }
   roleSorter->initialize(options.fairnessExcludeResourceNames);
   slaveSorter->initialize(options.slaveSorterResourceWeights);
 
@@ -2596,6 +2611,14 @@ bool HierarchicalAllocatorProcess::isFiltered(
     return false;
   }
 
+  if (!isOfferable(framework, role, resources)) {
+    LOG(INFO) << "Filtered offer with "<< resources
+              << " on agent " << slave.info.id()
+              << " for role " << role
+              << " of framework " << framework.frameworkId
+              << "not enough cpus "<< resources.cpus().getOrElse(0);
+    return true;
+  }
   foreach (const shared_ptr<OfferFilter>& offerFilter, agentFilters->second) {
     if (offerFilter->filter(resources)) {
       VLOG(1) << "Filtered offer with " << resources

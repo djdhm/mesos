@@ -121,6 +121,8 @@ struct Framework
   hashmap<std::string, hashmap<SlaveID, hashset<std::shared_ptr<OfferFilter>>>>
     offerFilters;
 
+  hashmap< std::string , double > minOfferableResources;
+  
   hashmap<SlaveID, hashset<std::shared_ptr<InverseOfferFilter>>>
     inverseOfferFilters;
 
@@ -781,6 +783,7 @@ private:
   void reviveRoles(Framework& framework, const std::set<std::string>& roles);
   std::function<std::vector<std::string>(std::vector<std::string>)> sortRolesAgain;
 
+  std::function<bool( const Framework& framework,const std::string& role,const Resources& resources)> isOfferable;
   // Helper to update the agent's total resources maintained in the allocator
   // and the role and quota sorters (whose total resources match the agent's
   // total resources). Returns true iff the stored agent total was changed.

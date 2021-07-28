@@ -779,6 +779,7 @@ void Master::initialize()
 
   options.allocationInterval = flags.allocation_interval;
   options.sortRolesOnce = flags.sort_roles_once;
+  options.minOfferableFilter = flags.min_offerable_filter;
   options.fairnessExcludeResourceNames =
     flags.fair_sharing_excluded_resource_names;
   options.filterGpuResources = flags.filter_gpu_resources;
