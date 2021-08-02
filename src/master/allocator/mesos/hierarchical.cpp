@@ -481,20 +481,6 @@ void HierarchicalAllocatorProcess::initialize(
     };
   }
 
-  if( options.minOfferableFilter){
-    isOfferable = [this] (const Framework& framework,const string& role,const Resources& resources){
-      double minimumCpus = 0;
-      if ( framework.minOfferableResources.find(role) != framework.minOfferableResources.end() ) {
-        minimumCpus = framework.minOfferableResources.at(role);
-      }   
-      return resources.cpus().getOrElse(0) >  minimumCpus;
-     };
-
-  }else{
-    isOfferable = [this] (const Framework& framework,const string& role,const Resources& resources){
-       return true;
-     };
-  }
   roleSorter->initialize(options.fairnessExcludeResourceNames);
   slaveSorter->initialize(options.slaveSorterResourceWeights);
 
@@ -2231,13 +2217,10 @@ void HierarchicalAllocatorProcess::__allocate()
 
   // Call the slave sorter again instead of random shuffle 
   slaveSorter->sort(slaveIds.begin(), slaveIds.end());
-  // Keep one consistent sort of roles on the allocation cycle 
-  vector<string> sortedRoles = roleSorter->sort();
 
   foreach (const SlaveID& slaveId, slaveIds) {
     Slave& slave = *CHECK_NOTNONE(getSlave(slaveId));
-    sortedRoles = sortRolesAgain(sortedRoles);
-    foreach (const string& role, sortedRoles) {
+    foreach (const string& role, roleSorter->sort()) {
       // TODO(bmahler): Handle shared volumes, which are always available but
       // should be excluded here based on `offeredSharedResources`.
       if (slave.getAvailable().empty()) {
@@ -2611,14 +2594,6 @@ bool HierarchicalAllocatorProcess::isFiltered(
     return false;
   }
 
-  if (!isOfferable(framework, role, resources)) {
-    LOG(INFO) << "Filtered offer with "<< resources
-              << " on agent " << slave.info.id()
-              << " for role " << role
-              << " of framework " << framework.frameworkId
-              << "not enough cpus "<< resources.cpus().getOrElse(0);
-    return true;
-  }
   foreach (const shared_ptr<OfferFilter>& offerFilter, agentFilters->second) {
     if (offerFilter->filter(resources)) {
       VLOG(1) << "Filtered offer with " << resources
