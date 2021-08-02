@@ -17,50 +17,47 @@
 #define __MASTER_ALLOCATOR_SLAVE_SORTER_CPU_FIRST_HPP__
 
 #include <algorithm>
-#include <algorithm> // for min and max
-#include <set>
-#include <string>
-#include <vector>
-
+#include <algorithm>  // for min and max
 #include <mesos/mesos.hpp>
 #include <mesos/resources.hpp>
 #include <mesos/values.hpp>
+#include <set>
 #include <stout/bytes.hpp>
 #include <stout/check.hpp>
 #include <stout/hashmap.hpp>
 #include <stout/option.hpp>
+#include <string>
+#include <vector>
 
-#include "mesos/resource_quantities.hpp"
 #include "master/allocator/mesos/slavesorter/slavesorter.hpp"
-
+#include "mesos/resource_quantities.hpp"
 
 namespace mesos {
 namespace internal {
 namespace master {
 namespace allocator {
 
-
-class ResourceSlaveSorterCPUFirst : public SlaveSorter
-{
-public:
+class ResourceSlaveSorterCPUFirst : public SlaveSorter {
+ public:
   ResourceSlaveSorterCPUFirst();
   virtual ~ResourceSlaveSorterCPUFirst();
-  virtual void sort(
-    std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end);
-  virtual void add(
-    const SlaveID& slaveId,
-    const SlaveInfo& slaveInfo,
-    const Resources& resources);
+  virtual void sort(std::vector<SlaveID>::iterator begin,
+                    std::vector<SlaveID>::iterator end);
+  virtual void add(const SlaveID& slaveId, const SlaveInfo& slaveInfo,
+                   const Resources& resources);
   // Remove resources from the total pool.
   virtual void remove(const SlaveID& slaveId, const Resources& resources);
   // Specify that resources have been allocated on the given slave
   virtual void allocated(const SlaveID& slaveId, const Resources& resources);
 
-
   // Specify that resources have been unallocated on the given slave.
   virtual void unallocated(const SlaveID& slaveId, const Resources& resources);
 
-private:
+  bool isOfferable(const Resources& minOfferable,
+                                                const std::string& role,
+                                                const Resources& resources);
+
+ private:
   bool _compare(SlaveID& l, SlaveID& r);
   // TODO(jabnouneo) : merge in single class + optimize
   hashmap<SlaveID, Resources> allocatedResources;
@@ -69,8 +66,7 @@ private:
 
   //
   // Total resources.
-  struct Total
-  {
+  struct Total {
     // We need to keep track of the resources (and not just scalar
     // quantities) to account for multiple copies of the same shared
     // resources. We need to ensure that we do not update the scalar
@@ -93,9 +89,9 @@ private:
     Resources scalarQuantities;
   } total_;
 };
-} // namespace allocator {
-} // namespace master {
-} // namespace internal {
-} // namespace mesos {
+}  // namespace allocator
+}  // namespace master
+}  // namespace internal
+}  // namespace mesos
 
-#endif // __MASTER_ALLOCATOR_SLAVE_SORTER_CPU_FIRST_HPP__
+#endif  // __MASTER_ALLOCATOR_SLAVE_SORTER_CPU_FIRST_HPP__
