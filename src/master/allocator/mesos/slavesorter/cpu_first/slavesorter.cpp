@@ -154,7 +154,7 @@ void ResourceSlaveSorterCPUFirst::unallocated(
 bool ResourceSlaveSorterCPUFirst::isOfferable(
   const hashmap<std::string, Resources> & minOfferable,
   const std::string & role,
-  const Resources& resources) 
+  const Resources& resources)
 {
   Resources minOfferableResources = minOfferable.at(role);
   double minCpusOfferable = minOfferableResources.cpus().getOrElse(0);

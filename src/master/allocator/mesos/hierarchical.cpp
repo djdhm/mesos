@@ -2150,7 +2150,7 @@ void HierarchicalAllocatorProcess::__allocate()
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
             isFiltered(framework, role, slave, toAllocate) ||
-            slaveSorter->isOfferable(framework.minOfferableResources, role, toAllocate)) {
+            !slaveSorter->isOfferable(framework.minOfferableResources, role, toAllocate)) {
           VLOG(2) << "[CRITEO] " + role + " filters these resources OR offer would be smaller than minAllocatableParameter" << slaveId;
           continue;
         }
