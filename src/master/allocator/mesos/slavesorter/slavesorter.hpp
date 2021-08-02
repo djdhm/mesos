@@ -72,9 +72,10 @@ class SlaveSorter {
   virtual void unallocated(const SlaveID& slaveId,
                            const Resources& resources) = 0;
 
-  bool isOfferable(const Resources& minOfferable, const std::string& role,
-                   const Resources& resources) {
-    return true;
+  bool isOfferable(const hashmap<std::string, Resources> & minOfferable,
+                   const std::string& role,const Resources& resources) 
+  {
+  return true;
   }
 };
 

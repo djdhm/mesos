@@ -470,16 +470,6 @@ void HierarchicalAllocatorProcess::initialize(
   completedFrameworkMetrics =
     BoundedHashMap<FrameworkID, process::Owned<FrameworkMetrics>>(
         options.maxCompletedFrameworks);
-  
-  if( options.sortRolesOnce ){
-    sortRolesAgain = [this](vector<string> sortedRoles) {
-      return sortedRoles;
-    };
-  }else {
-    sortRolesAgain = [this](vector<string> sortedRoles) {
-      return this->roleSorter->sort();
-    };
-  }
 
   roleSorter->initialize(options.fairnessExcludeResourceNames);
   slaveSorter->initialize(options.slaveSorterResourceWeights);
@@ -2159,7 +2149,8 @@ void HierarchicalAllocatorProcess::__allocate()
 
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
-            isFiltered(framework, role, slave, toAllocate)) {
+            isFiltered(framework, role, slave, toAllocate) ||
+            slaveSorter->isOfferable(framework.minOfferableResources, role, toAllocate)) {
           VLOG(2) << "[CRITEO] " + role + " filters these resources OR offer would be smaller than minAllocatableParameter" << slaveId;
           continue;
         }
@@ -2307,7 +2298,8 @@ void HierarchicalAllocatorProcess::__allocate()
 
         // If the framework filters these resources, ignore.
         if (!allocatable(toAllocate, role, framework) ||
-            isFiltered(framework, role, slave, toAllocate)) {
+            isFiltered(framework, role, slave, toAllocate) || 
+            !slaveSorter->isOfferable(framework.minOfferableResources, role, toAllocate)) {
           continue;
         }
 

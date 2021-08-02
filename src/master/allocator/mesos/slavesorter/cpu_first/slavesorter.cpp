@@ -20,15 +20,19 @@ namespace internal {
 namespace master {
 namespace allocator {
 
+
 ResourceSlaveSorterCPUFirst::ResourceSlaveSorterCPUFirst() {}
 
 ResourceSlaveSorterCPUFirst::~ResourceSlaveSorterCPUFirst() {}
 
-bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r) {
+bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r)
+{
   CHECK(freeResources.contains(l));
   CHECK(freeResources.contains(r));
+
   const Resources lres = freeResources[l];
   const Resources rres = freeResources[r];
+
   if (lres.cpus().getOrElse(0) < rres.cpus().getOrElse(0)) {
     return true;
   } else if (lres.cpus().getOrElse(0) > rres.cpus().getOrElse(0)) {
@@ -41,43 +45,47 @@ bool ResourceSlaveSorterCPUFirst::_compare(SlaveID& l, SlaveID& r) {
     return false;
   }
 
-  return (lres.disk().getOrElse(0) < rres.disk().getOrElse(0));
+  return  (lres.disk().getOrElse(0) < rres.disk().getOrElse(0));
 }
 
-void ResourceSlaveSorterCPUFirst::sort(std::vector<SlaveID>::iterator begin,
-                                       std::vector<SlaveID>::iterator end) {
-  std::sort(begin, end,
-            [this](SlaveID l, SlaveID r) { return _compare(l, r); });
+void ResourceSlaveSorterCPUFirst::sort(
+  std::vector<SlaveID>::iterator begin, std::vector<SlaveID>::iterator end)
+{
+  std::sort(
+    begin, end, [this](SlaveID l, SlaveID r) { return _compare(l, r); });
 }
 
-void ResourceSlaveSorterCPUFirst::add(const SlaveID& slaveId,
-                                      const SlaveInfo& slaveInfo,
-                                      const Resources& resources) {
+void ResourceSlaveSorterCPUFirst::add(
+  const SlaveID& slaveId,
+  const SlaveInfo& slaveInfo,
+  const Resources& resources)
+{
   // TODO(jabnouneo): refine
   // totalResources[slaveId] += resources.createStrippedScalarQuantity();
   if (!resources.empty()) {
     // Add shared resources to the total quantities when the same
     // resources don't already exist in the total.
     const Resources newShared =
-        resources.shared().filter([this, slaveId](const Resource& resource) {
-          return !total_.resources[slaveId].contains(resource);
-        });
+      resources.shared().filter([this, slaveId](const Resource& resource) {
+        return !total_.resources[slaveId].contains(resource);
+      });
 
     total_.resources[slaveId] += resources;
     freeResources[slaveId] = resources;
     const Resources scalarQuantities =
-        (resources.nonShared() + newShared).createStrippedScalarQuantity();
+      (resources.nonShared() + newShared).createStrippedScalarQuantity();
 
     total_.scalarQuantities += scalarQuantities;
   }
 }
 
-void ResourceSlaveSorterCPUFirst::remove(const SlaveID& slaveId,
-                                         const Resources& resources) {
+void ResourceSlaveSorterCPUFirst::remove(
+  const SlaveID& slaveId, const Resources& resources)
+{
   if (!resources.empty()) {
     CHECK(total_.resources.contains(slaveId));
     CHECK(total_.resources[slaveId].contains(resources))
-        << total_.resources[slaveId] << " does not contain " << resources;
+      << total_.resources[slaveId] << " does not contain " << resources;
 
     total_.resources[slaveId] -= resources;
     freeResources[slaveId] -= allocatedResources[slaveId];
@@ -85,12 +93,12 @@ void ResourceSlaveSorterCPUFirst::remove(const SlaveID& slaveId,
     // Remove shared resources from the total quantities when there
     // are no instances of same resources left in the total.
     const Resources absentShared =
-        resources.shared().filter([this, slaveId](const Resource& resource) {
-          return !total_.resources[slaveId].contains(resource);
-        });
+      resources.shared().filter([this, slaveId](const Resource& resource) {
+        return !total_.resources[slaveId].contains(resource);
+      });
 
     const Resources scalarQuantities =
-        (resources.nonShared() + absentShared).createStrippedScalarQuantity();
+      (resources.nonShared() + absentShared).createStrippedScalarQuantity();
 
     CHECK(total_.scalarQuantities.contains(scalarQuantities));
     total_.scalarQuantities -= scalarQuantities;
@@ -98,21 +106,23 @@ void ResourceSlaveSorterCPUFirst::remove(const SlaveID& slaveId,
     if (total_.resources[slaveId].empty()) {
       total_.resources.erase(slaveId);
       freeResources.erase(slaveId);
+
     }
   }
 }
 
-void ResourceSlaveSorterCPUFirst::allocated(const SlaveID& slaveId,
-                                            const Resources& toAdd) {
+void ResourceSlaveSorterCPUFirst::allocated(
+  const SlaveID& slaveId, const Resources& toAdd)
+{
   // Add shared resources to the allocated quantities when the same
   // resources don't already exist in the allocation.
   const Resources sharedToAdd =
-      toAdd.shared().filter([this, slaveId](const Resource& resource) {
-        return !total_.resources[slaveId].contains(resource);
-      });
+    toAdd.shared().filter([this, slaveId](const Resource& resource) {
+      return !total_.resources[slaveId].contains(resource);
+    });
 
   const Resources quantitiesToAdd =
-      (toAdd.nonShared() + sharedToAdd).createStrippedScalarQuantity();
+    (toAdd.nonShared() + sharedToAdd).createStrippedScalarQuantity();
   total_.resources[slaveId] += quantitiesToAdd;
   freeResources[slaveId] -= quantitiesToAdd;
   allocatedResources[slaveId] += toAdd;
@@ -120,32 +130,39 @@ void ResourceSlaveSorterCPUFirst::allocated(const SlaveID& slaveId,
 }
 
 // Specify that resources have been unallocated on the given slave.
-void ResourceSlaveSorterCPUFirst::unallocated(const SlaveID& slaveId,
-                                              const Resources& toRemove) {
+void ResourceSlaveSorterCPUFirst::unallocated(
+  const SlaveID& slaveId, const Resources& toRemove)
+{
   // TODO(jabnouneo): refine and account for shared resources
   CHECK(allocatedResources.contains(slaveId));
   CHECK(allocatedResources.at(slaveId).contains(toRemove))
-      << "Resources " << allocatedResources.at(slaveId) << " at agent "
-      << slaveId << " does not contain " << toRemove;
+    << "Resources " << allocatedResources.at(slaveId) << " at agent " << slaveId
+    << " does not contain " << toRemove;
 
   const Resources quantitiesToRemove =
-      (toRemove.nonShared()).createStrippedScalarQuantity();
+    (toRemove.nonShared()).createStrippedScalarQuantity();
   allocatedResources[slaveId] -= quantitiesToRemove;
   freeResources[slaveId] += quantitiesToRemove;
-  
+
+
+
   if (allocatedResources[slaveId].empty()) {
     allocatedResources.erase(slaveId);
   }
 }
-bool ResourceSlaveSorterCPUFirst::isOfferable(const Resources& minOfferable,
-                                              const std::string& role,
-                                              const Resources& resources) {
-  double minCpusOfferable = minOfferable.cpus().getOrElse(0);
-  double offerCpus = minOfferable.cpus().getOrElse(0);
+
+bool ResourceSlaveSorterCPUFirst::isOfferable(
+  const hashmap<std::string, Resources> & minOfferable,
+  const std::string & role,
+  const Resources& resources) 
+{
+  Resources minOfferableResources = minOfferable.at(role);
+  double minCpusOfferable = minOfferableResources.cpus().getOrElse(0);
+  double offerCpus = minOfferableResources.cpus().getOrElse(0);
   return offerCpus > minCpusOfferable;
 }
 
-}  // namespace allocator
-}  // namespace master
-}  // namespace internal
-}  // namespace mesos
+} // namespace allocator {
+} // namespace master {
+} // namespace internal {
+} // namespace mesos {
