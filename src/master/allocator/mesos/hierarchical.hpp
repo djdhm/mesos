@@ -120,7 +120,7 @@ struct Framework
   // resources were allocated to.
   hashmap<std::string, hashmap<SlaveID, hashset<std::shared_ptr<OfferFilter>>>>
     offerFilters;
-  
+
   hashmap<SlaveID, hashset<std::shared_ptr<InverseOfferFilter>>>
     inverseOfferFilters;
 
